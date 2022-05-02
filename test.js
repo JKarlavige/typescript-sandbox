@@ -1,5 +1,5 @@
 "use strict";
-// inferred type
+// ------------ Inferred Types ------------ //
 let intro = "welcome";
 // this expects string from inferred type, will not accept number
 intro = 20;
@@ -8,17 +8,17 @@ const doMath = (num1, num2) => {
 };
 // this will yell
 doMath("1", "2");
-// explicit types
+// ------------ Explicit Types ------------ //
 let character;
 // empty array of strings
 let names = [];
-// union types
+// ------------ Union Types ------------ //
 // only need parentheses if declaring array
 let values = [20, "cool"];
 // union type that's not array does not need parentheses
 // this example will error, as it does not accept boolean
 let thing = false;
-// objects
+// ------------ Objects ------------ //
 // this object can accept any properties
 let anything;
 anything = {
@@ -68,7 +68,7 @@ function sendData(user) {
 function sendData2(user) {
     console.log(user.name);
 }
-// Type Assertions
+// ------------ Type Assertions ------------ //
 // Used when you may have better understanding of a type
 let code = 123;
 let employeeCode = code;
@@ -77,7 +77,7 @@ let employee = {};
 employee.name = "Steve";
 let employee2 = {};
 employee2.name = "Steve";
-// Literal Types
+// ------------ Literal Types ------------ //
 // Used to set specific types
 // Great for accepting a set of known values
 // Similiar to how let and var work compared to const
@@ -90,11 +90,76 @@ function setPos(position) {
 }
 setPos("left"); // works
 setPos("outside"); // does not work
-// Generics
+// ------------ Generics ------------ //
 // Reusable blocks of codes which can be used with different types
 const addId = (obj) => {
     const id = Math.floor(Math.random() * 100);
-    return Object.assign(Object.assign({}, obj), { id });
+    return { ...obj, id };
 };
 let item = addId({ name: "fun", age: 55 });
-console.log("item", item);
+// This wont work, as addId returns obj, but doesn't know properties
+console.log("item", item.name);
+// Adds <Type> generic to function
+// Most often used as <T>
+// This captures data passed into function
+const addId2 = (obj) => {
+    const id = Math.floor(Math.random() * 100);
+    return { ...obj, id };
+};
+let item2 = addId2({ name: "fun", age: 55 });
+// This will now work, and item2 knows all available properties
+console.log("item2", item2.name);
+// But addId2 will now accept anything,
+// as <Type> doesn't specify it's an object
+// so addId2 can accept a string, even though it should receive obj
+console.log(addId2("wee"));
+// To fix this, generics can be constrained using extend
+const addId3 = (obj) => {
+    const id = Math.floor(Math.random() * 100);
+    return { ...obj, id };
+};
+// with the generic extended as obj,
+// addId can no longer accept a string
+// this will throw error
+let item3 = addId3("cool");
+const addPerson = (obj) => {
+    const id = Math.floor(Math.random() * 100);
+    return { ...obj, id };
+};
+// this will work,as it has name property,
+// but can still accept other properties
+const newPerson = addPerson({ name: "steve", age: 20 });
+const newDoc = {
+    name: "steve",
+    age: 50,
+    data: { isObject: true },
+};
+const newDoc2 = {
+    name: "steve",
+    age: 50,
+    data: ["yes", "no"],
+};
+// ------------ Enums ------------ //
+// allows to associate data with numeric values
+// Book = 0, Person = 3 in below enum
+var ResourceType;
+(function (ResourceType) {
+    ResourceType[ResourceType["Book"] = 0] = "Book";
+    ResourceType[ResourceType["Author"] = 1] = "Author";
+    ResourceType[ResourceType["Film"] = 2] = "Film";
+    ResourceType[ResourceType["Person"] = 3] = "Person";
+})(ResourceType || (ResourceType = {}));
+const newResource = {
+    name: "steve",
+    resource: ResourceType.Film,
+    data: { isObject: true },
+};
+const newResource2 = {
+    name: "steve",
+    resource: ResourceType.Author,
+    data: ["yes", "no"],
+};
+// ------------ Tuples ------------ //
+// Defines type for each item in array
+// 'error' will throw error, as it requires boolean
+let tuple = ["wee", 20, "error"];
